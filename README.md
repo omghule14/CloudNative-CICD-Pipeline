@@ -1,126 +1,167 @@
-# 🚀 CloudNative-CICD-Pipeline
+# 🚀 CI/CD Pipeline for 3-Tier Application Deployment
 
-## Automated CI/CD Pipeline with Docker & Kubernetes
+A complete **DevOps CI/CD project** demonstrating automated build, containerization, testing, and deployment of a **3-tier web application** using **GitHub Actions, Docker, Kubernetes, Nginx, and MySQL**.
 
-A production-style cloud-native application demonstrating **CI/CD automation, Docker containerization, Kubernetes orchestration, and MySQL database integration**.
-
-This project implements an end-to-end DevOps workflow using **GitHub Actions, Docker, Docker Hub, Kubernetes, Nginx, Go, and MySQL**. The goal is to automate application build, containerization, image publishing, and Kubernetes deployment.
+The project implements a practical software delivery workflow where source-code changes trigger automated CI/CD processes and containerized applications are deployed using Kubernetes.
 
 ---
 
 ## 📌 Project Overview
 
-**CloudNative-CICD-Pipeline** is a three-tier application designed to demonstrate a practical DevOps and cloud-native deployment workflow.
+This project demonstrates how a traditional 3-tier application can be containerized and deployed using modern DevOps practices.
 
-The project covers the complete application delivery lifecycle:
+The application consists of three primary layers:
+
+```text
+┌───────────────────────────────┐
+│           Frontend            │
+│        HTML / CSS / JS        │
+│            Nginx              │
+└───────────────┬───────────────┘
+                │
+                │ HTTP / API
+                ▼
+┌───────────────────────────────┐
+│           Backend             │
+│            Go API             │
+│            :8080              │
+└───────────────┬───────────────┘
+                │
+                │ SQL
+                ▼
+┌───────────────────────────────┐
+│            MySQL              │
+│          Database             │
+│            :3306              │
+└───────────────────────────────┘
+```
+
+The complete DevOps workflow is:
 
 ```text
 Developer
-    ↓
-GitHub
-    ↓
+    │
+    │ git push
+    ▼
+GitHub Repository
+    │
+    ▼
 GitHub Actions
-    ↓
-Build & Test
-    ↓
-Docker Images
-    ↓
-Docker Hub
-    ↓
-Kubernetes
-    ↓
-Application Deployment
-```
-
-### Key Objectives
-
-* Containerize frontend and backend applications
-* Run multiple services using Docker Compose
-* Automate CI/CD using GitHub Actions
-* Build and publish Docker images
-* Deploy applications to Kubernetes
-* Manage application configuration and secrets
-* Run MySQL as the persistent database layer
-* Implement health checks and rolling deployments
-* Practice real-world DevOps workflows
-
----
-
-## 🏗️ Architecture
-
-```text
-                         Developer
-                             │
-                             │ git push
-                             ▼
-                    ┌─────────────────┐
-                    │     GitHub      │
-                    │   Repository    │
-                    └────────┬────────┘
-                             │
-                             ▼
-                  ┌─────────────────────┐
-                  │   GitHub Actions    │
-                  │       CI/CD         │
-                  └──────────┬──────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │     Docker      │
-                    │ Build & Test    │
-                    └────────┬────────┘
-                             │
-                             ▼
-                       Docker Hub
-                             │
-                             ▼
-                     ┌───────────────┐
-                     │  Kubernetes   │
-                     │    Cluster    │
-                     └───────┬───────┘
-                             │
-              ┌──────────────┼──────────────┐
-              │              │              │
-              ▼              ▼              ▼
-         Frontend         Backend         MySQL
-          Nginx            Go API        Database
+    │
+    ├── Build
+    ├── Test
+    ├── Docker Build
+    └── Docker Push
+             │
+             ▼
+        Docker Hub
+             │
+             ▼
+        Kubernetes
+             │
+             ▼
+      3-Tier Application
 ```
 
 ---
 
-## 🧰 Technology Stack
+# 🎯 Project Objectives
 
-| Category           | Technology                                  |
-| ------------------ | ------------------------------------------- |
-| Frontend           | HTML, CSS, JavaScript                       |
-| Web Server         | Nginx                                       |
-| Backend            | Go / Gin                                    |
-| Database           | MySQL 8.4                                   |
-| Containerization   | Docker                                      |
-| Orchestration      | Kubernetes                                  |
-| Local Kubernetes   | Kind                                        |
-| CI/CD              | GitHub Actions                              |
-| Container Registry | Docker Hub                                  |
-| Source Control     | Git & GitHub                                |
-| Configuration      | Environment Variables, ConfigMaps & Secrets |
+* Build a complete CI/CD pipeline using GitHub Actions
+* Containerize frontend and backend applications using Docker
+* Run the complete application locally using Docker Compose
+* Use Nginx as a reverse proxy
+* Deploy the application using Kubernetes
+* Use MySQL as the persistent database
+* Automate Docker image creation and publishing
+* Implement Kubernetes rolling deployments
+* Manage configuration using environment variables and Kubernetes resources
+* Practice real-world DevOps deployment workflows
 
 ---
 
-## 📁 Project Structure
+# 🧰 Technology Stack
+
+| Category                | Technology                                 |
+| ----------------------- | ------------------------------------------ |
+| Source Control          | Git, GitHub                                |
+| CI/CD                   | GitHub Actions                             |
+| Frontend                | HTML, CSS, JavaScript                      |
+| Web Server              | Nginx                                      |
+| Backend                 | Go / Gin                                   |
+| Database                | MySQL 8.4                                  |
+| Containerization        | Docker                                     |
+| Local Orchestration     | Docker Compose                             |
+| Container Registry      | Docker Hub                                 |
+| Container Orchestration | Kubernetes                                 |
+| Local Kubernetes        | Kind                                       |
+| Configuration           | Environment Variables, ConfigMaps, Secrets |
+
+---
+
+# 🏗️ System Architecture
 
 ```text
-CloudNative-CICD-Pipeline/
+                         ┌─────────────────┐
+                         │    Developer    │
+                         └────────┬────────┘
+                                  │
+                                  │ git push
+                                  ▼
+                         ┌─────────────────┐
+                         │     GitHub      │
+                         │   Repository    │
+                         └────────┬────────┘
+                                  │
+                                  ▼
+                       ┌─────────────────────┐
+                       │   GitHub Actions    │
+                       │      CI/CD          │
+                       └──────────┬──────────┘
+                                  │
+                    ┌─────────────┴─────────────┐
+                    │                           │
+                    ▼                           ▼
+             Build & Test                Docker Build
+                                                │
+                                                ▼
+                                          Docker Hub
+                                                │
+                                                ▼
+                                         Kubernetes
+                                                │
+                  ┌─────────────────────────────┼─────────────────────────┐
+                  │                             │                         │
+                  ▼                             ▼                         ▼
+           ┌─────────────┐              ┌─────────────┐           ┌─────────────┐
+           │  Frontend   │              │   Backend   │           │    MySQL    │
+           │    Nginx    │─────────────▶│    Go API   │──────────▶│  Database   │
+           │     :80     │              │    :8080    │           │    :3306    │
+           └─────────────┘              └─────────────┘           └─────────────┘
+```
+
+---
+
+# 📂 Project Structure
+
+```text
+CI-CD-Pipeline-3-Tier-Application/
 │
 ├── .github/
 │   └── workflows/
+│       ├── ci.yml
+│       ├── cd.yml
+│       └── cd-k8s.yml
 │
 ├── backend/
 │   ├── Dockerfile
+│   ├── main.go
 │   └── ...
 │
 ├── frontend/
 │   ├── Dockerfile
 │   ├── nginx.conf
+│   ├── index.html
 │   └── ...
 │
 ├── mysql/
@@ -144,9 +185,11 @@ CloudNative-CICD-Pipeline/
 
 ---
 
-## 🐳 Run Locally with Docker Compose
+# 🐳 Docker Compose Deployment
 
-### Prerequisites
+Docker Compose is used to run the complete 3-tier application locally.
+
+## Prerequisites
 
 Install:
 
@@ -154,43 +197,66 @@ Install:
 * Docker Desktop
 * Docker Compose
 
-Verify:
+Verify the installation:
 
 ```bash
 docker --version
 docker compose version
 ```
 
-### 1. Clone the repository
+---
+
+## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/omghule14/CloudNative-CICD-Pipeline.git
-cd CloudNative-CICD-Pipeline
+git clone https://github.com/omghule14/REPOSITORY-NAME.git
 ```
-
-### 2. Create environment configuration
-
-Linux/macOS:
 
 ```bash
-cp .env.example .env
+cd REPOSITORY-NAME
 ```
 
-Windows CMD:
+Replace `REPOSITORY-NAME` with your actual GitHub repository name.
+
+---
+
+## 2. Create Environment File
+
+### Windows CMD
 
 ```cmd
 copy .env.example .env
 ```
 
-Update `.env` with the required configuration.
+### Linux / macOS
 
-### 3. Build and start
+```bash
+cp .env.example .env
+```
+
+Configure the required environment variables in `.env`.
+
+> ⚠️ Never commit `.env` or passwords to GitHub.
+
+---
+
+## 3. Build and Start Containers
 
 ```bash
 docker compose up -d --build
 ```
 
-### 4. Check containers
+This starts:
+
+```text
+Frontend
+Backend
+MySQL
+```
+
+---
+
+## 4. Check Running Containers
 
 ```bash
 docker compose ps
@@ -202,68 +268,162 @@ or:
 docker ps
 ```
 
-### 5. Access the application
+---
+
+## 5. Access the Application
+
+Open:
 
 ```text
 http://localhost
 ```
 
+The frontend is served through Nginx.
+
 ---
 
-## 🔄 CI/CD Pipeline
+# 🔀 Nginx Reverse Proxy
 
-The GitHub Actions pipeline automates the software delivery process.
+Nginx acts as the entry point for the application.
 
 ```text
-Git Push
-   │
-   ▼
-GitHub Actions
-   │
-   ├── Checkout Code
-   │
-   ├── Build Backend
-   │
-   ├── Build Frontend
-   │
-   ├── Run Tests / Validation
-   │
-   ├── Build Docker Images
-   │
-   └── Push Images to Docker Hub
-                │
-                ▼
-          Docker Registry
-                │
-                ▼
-           Kubernetes
-                │
-                ▼
-          Application
+                     Client
+                       │
+                       │ HTTP :80
+                       ▼
+                ┌──────────────┐
+                │    Nginx     │
+                │   Frontend   │
+                └──────┬───────┘
+                       │
+                       │ /api/
+                       ▼
+                ┌──────────────┐
+                │   Backend    │
+                │   Go / Gin   │
+                │    :8080     │
+                └──────┬───────┘
+                       │
+                       │ MySQL
+                       ▼
+                ┌──────────────┐
+                │    MySQL     │
+                │    :3306     │
+                └──────────────┘
 ```
 
-### CI Responsibilities
-
-* Checkout source code
-* Validate application
-* Build Docker images
-* Tag images
-* Push images to Docker Hub
-
-### CD Responsibilities
-
-* Retrieve the latest container images
-* Update Kubernetes deployments
-* Perform rolling updates
-* Verify deployment status
+This allows the frontend and backend to be accessed through a single application endpoint.
 
 ---
 
-## ☸️ Kubernetes Deployment
+# 🔄 CI/CD Pipeline
 
-The project supports deployment to a local Kubernetes cluster using **Kind**.
+GitHub Actions automates the application's build and deployment lifecycle.
 
-### Prerequisites
+```text
+Developer
+    │
+    │ git push
+    ▼
+GitHub
+    │
+    ▼
+GitHub Actions
+    │
+    ├── Checkout Code
+    │
+    ├── Build Application
+    │
+    ├── Run Tests
+    │
+    ├── Build Docker Images
+    │
+    ├── Tag Images
+    │
+    └── Push Images
+           │
+           ▼
+       Docker Hub
+           │
+           ▼
+      Kubernetes
+           │
+           ▼
+     Application
+```
+
+---
+
+# ⚙️ GitHub Actions
+
+The CI/CD workflows are stored inside:
+
+```text
+.github/workflows/
+```
+
+The pipeline can automate:
+
+### Continuous Integration
+
+1. Checkout source code
+2. Install dependencies
+3. Run tests
+4. Build the application
+5. Build Docker images
+
+### Continuous Delivery
+
+1. Authenticate with Docker Hub
+2. Push Docker images
+3. Update Kubernetes deployment
+4. Deploy the latest version
+5. Verify deployment status
+
+---
+
+# 🐳 Docker Images
+
+The project contains separate Docker images for the application components.
+
+Example:
+
+```text
+Frontend Image
+        │
+        ▼
+Nginx Container
+
+Backend Image
+        │
+        ▼
+Go API Container
+
+MySQL Image
+        │
+        ▼
+Database Container
+```
+
+Docker images can be published to Docker Hub and later pulled by Kubernetes.
+
+---
+
+# ☸️ Kubernetes Deployment
+
+The application can also be deployed to Kubernetes using **Kind** for local development.
+
+## Prerequisites
+
+Install:
+
+```bash
+Docker Desktop
+kubectl
+Kind
+```
+
+Verify:
 
 ```bash
 docker --version
@@ -271,122 +431,151 @@ kubectl version --client
 kind version
 ```
 
-### Create the cluster
+---
+
+## Create Kubernetes Cluster
+
+If the project Makefile provides the required configuration:
 
 ```bash
 make up
 ```
 
-### Check cluster
+---
+
+## Check Kubernetes Nodes
 
 ```bash
 kubectl get nodes
 ```
 
-### Check pods
+---
+
+## Check Pods
 
 ```bash
-kubectl get pods -A
-```
-
-### Check services
-
-```bash
-kubectl get services -A
-```
-
-### Check deployments
-
-```bash
-kubectl get deployments -A
+kubectl get pods
 ```
 
 ---
 
-## 🔐 Security & Configuration
+## Check Services
 
-Sensitive information should never be committed to GitHub.
+```bash
+kubectl get services
+```
 
-The project uses:
+---
 
-* `.env` for local configuration
-* Kubernetes Secrets for sensitive Kubernetes configuration
-* GitHub Actions Secrets for CI/CD credentials
+## Check Deployments
 
-Sensitive files should remain excluded from Git:
+```bash
+kubectl get deployments
+```
+
+---
+
+# ☸️ Kubernetes Architecture
 
 ```text
-.env
-*.pem
-private keys
-passwords
-API tokens
-Docker Hub credentials
+                    Kubernetes Cluster
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+   │  Frontend   │  │   Backend   │  │    MySQL    │
+   │ Deployment  │  │ Deployment  │  │ StatefulSet │
+   └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+          │                │                │
+          ▼                ▼                ▼
+   Frontend Service  Backend Service   MySQL Service
+          │                │                │
+          └────────────────┴────────────────┘
 ```
 
 ---
 
-## 🗄️ Database
+# 🔐 Configuration & Secrets
 
-The application uses **MySQL 8.4** as its database layer.
+Sensitive information should never be hard-coded into the application or committed to GitHub.
 
-The database is initialized using:
+The project can use:
+
+* `.env`
+* Kubernetes Secrets
+* Kubernetes ConfigMaps
+* GitHub Actions Secrets
+
+Typical sensitive values include:
+
+```text
+DB_PASSWORD
+DOCKERHUB_USERNAME
+DOCKERHUB_TOKEN
+```
+
+GitHub Actions secrets can be configured from:
+
+```text
+GitHub Repository
+      ↓
+Settings
+      ↓
+Secrets and variables
+      ↓
+Actions
+```
+
+---
+
+# 🗄️ MySQL Database
+
+MySQL is used as the database layer of the application.
+
+Database initialization is handled through:
 
 ```text
 mysql/init.sql
 ```
 
-With Docker Compose, the database runs as a separate container.
-
-With Kubernetes, MySQL is deployed separately and accessed by the backend through Kubernetes service discovery.
+With Docker Compose:
 
 ```text
-Backend
-   │
-   │ mysql-service:3306
-   ▼
-MySQL
+Backend Container
+       │
+       │ db:3306
+       ▼
+MySQL Container
+```
+
+With Kubernetes:
+
+```text
+Backend Pod
+     │
+     │ MySQL Service
+     ▼
+MySQL Pod
 ```
 
 ---
 
-## 🌐 Nginx Reverse Proxy
+# 🩺 Health Checks
 
-Nginx acts as the frontend web server and reverse proxy.
+Health checks help verify that application services are available.
 
-```text
-Client
-  │
-  ▼
-Nginx :80
-  │
-  ├── Static Frontend
-  │
-  └── /api/
-        │
-        ▼
-      Backend :8080
-```
-
-This provides a single entry point for users while keeping the backend service isolated from direct external access.
-
----
-
-## 🩺 Health Checks
-
-Health checks are used to verify application availability.
-
-Example:
+Example backend endpoint:
 
 ```text
 GET /health
 ```
 
-Health checks help Docker and Kubernetes determine whether the application is ready to receive traffic.
+Health checks can be used by Docker and Kubernetes to determine whether the application is ready to receive traffic.
 
 ---
 
-## 🛠️ Useful Docker Commands
+# 🛠️ Useful Docker Commands
 
 ### Start
 
@@ -394,7 +583,7 @@ Health checks help Docker and Kubernetes determine whether the application is re
 docker compose up -d
 ```
 
-### Rebuild
+### Build and Start
 
 ```bash
 docker compose up -d --build
@@ -406,31 +595,31 @@ docker compose up -d --build
 docker compose down
 ```
 
-### View containers
+### Check Containers
 
 ```bash
 docker compose ps
 ```
 
-### View logs
+### View All Logs
 
 ```bash
 docker compose logs
 ```
 
-### View backend logs
+### Backend Logs
 
 ```bash
 docker compose logs backend
 ```
 
-### View frontend logs
+### Frontend Logs
 
 ```bash
 docker compose logs frontend
 ```
 
-### View database logs
+### Database Logs
 
 ```bash
 docker compose logs db
@@ -438,45 +627,45 @@ docker compose logs db
 
 ---
 
-## 🛠️ Useful Kubernetes Commands
+# 🛠️ Useful Kubernetes Commands
 
-### Pods
+### View Pods
 
 ```bash
 kubectl get pods
 ```
 
-### Services
+### View Services
 
 ```bash
 kubectl get svc
 ```
 
-### Deployments
+### View Deployments
 
 ```bash
 kubectl get deployments
 ```
 
-### Pod logs
+### View Pod Logs
 
 ```bash
 kubectl logs <pod-name>
 ```
 
-### Describe resource
+### Describe Pod
 
 ```bash
 kubectl describe pod <pod-name>
 ```
 
-### Deployment status
+### Check Deployment Rollout
 
 ```bash
 kubectl rollout status deployment/<deployment-name>
 ```
 
-### Restart deployment
+### Restart Deployment
 
 ```bash
 kubectl rollout restart deployment/<deployment-name>
@@ -484,17 +673,57 @@ kubectl rollout restart deployment/<deployment-name>
 
 ---
 
-## 🎯 DevOps Skills Demonstrated
+# 🧪 Troubleshooting
 
-This project demonstrates practical experience with:
+### Docker Containers Not Starting
+
+```bash
+docker compose ps
+```
+
+Check logs:
+
+```bash
+docker compose logs
+```
+
+### Check Docker Images
+
+```bash
+docker images
+```
+
+### Check Kubernetes Pods
+
+```bash
+kubectl get pods
+```
+
+### Check Kubernetes Events
+
+```bash
+kubectl get events --sort-by=.lastTimestamp
+```
+
+### Check Services
+
+```bash
+kubectl get svc
+```
+
+---
+
+# 📈 DevOps Concepts Demonstrated
+
+This project provides hands-on experience with:
 
 ### Git & GitHub
 
-* Git repositories
-* Branch management
+* Git repository management
+* Branching
 * Commits
 * Remote repositories
-* GitHub workflows
+* Pull requests
 
 ### Docker
 
@@ -502,15 +731,15 @@ This project demonstrates practical experience with:
 * Docker images
 * Container networking
 * Docker Compose
-* Environment variables
+* Multi-container applications
 
 ### GitHub Actions
 
 * CI/CD workflows
 * Automated builds
+* Automated testing
 * Docker image publishing
 * Deployment automation
-* Secrets management
 
 ### Kubernetes
 
@@ -526,45 +755,64 @@ This project demonstrates practical experience with:
 
 ### DevOps Practices
 
-* Infrastructure automation
-* Continuous integration
-* Continuous deployment
+* Continuous Integration
+* Continuous Delivery
 * Containerization
+* Infrastructure automation
+* Application deployment
 * Service discovery
-* Application monitoring
 * Troubleshooting
 
 ---
 
-## 🔮 Future Improvements
+# 🔮 Future Enhancements
 
 Planned improvements include:
 
-* Deploy to AWS EKS
-* Add AWS Application Load Balancer
-* Implement Kubernetes Ingress
-* Add Horizontal Pod Autoscaling
-* Introduce Helm charts
-* Implement GitOps using Argo CD
-* Add Prometheus and Grafana
-* Add centralized logging
-* Integrate AWS Secrets Manager
-* Add container vulnerability scanning
-* Implement blue-green/canary deployments
+* ☁️ Deploy the application to AWS EKS
+* ⚖️ Configure AWS Application Load Balancer
+* 🌐 Implement Kubernetes Ingress
+* 📈 Add Horizontal Pod Autoscaling
+* 📦 Introduce Helm charts
+* 🔄 Implement GitOps using Argo CD
+* 📊 Add Prometheus and Grafana monitoring
+* 📝 Implement centralized logging
+* 🔐 Integrate AWS Secrets Manager
+* 🛡️ Add container vulnerability scanning
+* 🚀 Implement blue-green or canary deployments
 
 ---
 
-## 👨‍💻 Author
+# 📚 Learning Outcomes
 
-### Om Ghule
+By completing this project, I gained practical experience in:
 
-**GitHub:**
-[https://github.com/omghule14](https://github.com/omghule14)
+* Designing a 3-tier application architecture
+* Containerizing applications using Docker
+* Managing multi-container applications with Docker Compose
+* Creating CI/CD pipelines using GitHub Actions
+* Building and publishing Docker images
+* Deploying applications to Kubernetes
+* Managing Kubernetes Deployments and Services
+* Working with persistent database storage
+* Managing application configuration and secrets
+* Implementing health checks
+* Troubleshooting containerized applications
+* Understanding the complete CI/CD lifecycle
+
+---
+
+# 👨‍💻 Author
+
+## Om Ghule
+
+GitHub:
+https://github.com/omghule14
 
 ---
 
 ## ⭐ Project
 
-**CloudNative-CICD-Pipeline**
+**CI/CD Pipeline for 3-Tier Application Deployment**
 
-A hands-on DevOps project demonstrating how a containerized application can be built, tested, packaged, and deployed using modern CI/CD and Kubernetes practices.
+A hands-on DevOps project demonstrating automated application delivery using **GitHub Actions, Docker, Docker Hub, Kubernetes, Nginx, Go, and MySQL**.
