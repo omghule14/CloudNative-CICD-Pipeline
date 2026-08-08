@@ -1,17 +1,3 @@
-Got it. Use **CloudNative-CICD-Pipeline** as the project name throughout the README.
-
-I would present it professionally as:
-
-> **CloudNative-CICD-Pipeline — Automated CI/CD with Docker & Kubernetes**
-
-For the GitHub repository, use:
-
-```text
-CloudNative-CICD-Pipeline
-```
-
-And the main README title:
-
 # 🚀 CloudNative-CICD-Pipeline
 
 ## Automated CI/CD Pipeline with Docker & Kubernetes
