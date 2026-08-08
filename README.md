@@ -1,392 +1,584 @@
-# Cloudnative-CICD-Pipeline
+Got it. Use **CloudNative-CICD-Pipeline** as the project name throughout the README.
 
-A small, real application with a real CI/CD pipeline. The app — SkillPulse — lets you track skills you're learning and the hours you put in. The point isn't the app. The point is everything around it: how a single `git push` becomes a running update on a server in under two minutes, with no human pressing any button.
+I would present it professionally as:
 
+> **CloudNative-CICD-Pipeline — Automated CI/CD with Docker & Kubernetes**
 
-> **New here? Two beginner-friendly companion guides:**
->
-> - [`docs/skillpulse-cicd-guide.pdf`](docs/skillpulse-cicd-guide.pdf) — chapter one. 29 pages on the GitHub Actions pipeline: DevOps foundations, CI/CD, containers, deploying to a real EC2, plus resume + interview prep.
-> - [`docs/skillpulse-kubernetes-guide.pdf`](docs/skillpulse-kubernetes-guide.pdf) — chapter two. 32 pages on running this app on a local `kind` cluster: Kubernetes primitives, manifest walkthrough, the dev loop, real failures we hit (arch mismatches, port collisions), interview prep.
+For the GitHub repository, use:
 
----
-
-## Why DevOps matters
-
-For most of software's history, the people who *wrote* software and the people who *ran* it were two different teams with two different goals.
-
-- Developers wanted to ship features.
-- Operations wanted stability.
-
-The fastest way for ops to be stable was to slow developers down. The fastest way for developers to ship was to throw code over the wall. Both teams were right. Both teams were also miserable. And the customer paid the price — releases happened once a quarter, every release was scary, and bugs took weeks to fix.
-
-DevOps is the cultural and technical answer to that: *the same team owns the change all the way to production, and tooling makes that safe.* It's not a job title. It's a way of working that says small, frequent, automated, and reversible beats big, rare, manual, and irreversible — every time.
-
-When DevOps is working you can tell because:
-
-- **Deploys are boring.** Friday afternoon, Monday morning, doesn't matter.
-- **Rollbacks are cheap.** A bad deploy is a 30-second fix, not an incident.
-- **Feedback is fast.** A broken commit fails CI in minutes, not "after QA next sprint."
-- **Ownership is clear.** The person who wrote the code is the person who watches it ship.
-
-You get there by automating the path from a developer's laptop to production. That automation is called a **pipeline**.
-
----
-
-## Why CI/CD is the heart of DevOps
-
-CI/CD is two ideas wearing one acronym.
-
-- **Continuous Integration** — every change, from every developer, gets built and tested automatically the moment it lands. You catch breakage in minutes, not days. Merge conflicts shrink because nobody's branch lives for two weeks.
-- **Continuous Delivery / Deployment** — every change that passes CI is automatically packaged and shipped — to staging, or all the way to production. There is no "deploy day." Every commit is a candidate release.
-
-The reason this matters: the cost of fixing a bug grows with the time between writing it and finding it. CI/CD shortens that gap to minutes. The reason it's hard: the only way to make it work is to *automate everything*. Build, test, package, deploy, verify. No "just run this script on my laptop" steps. If a human has to remember it, it will eventually be forgotten — and then it will fail at 2 a.m.
-
----
-
-## Why GitHub Actions
-
-A pipeline needs a runner — something that watches your repo, executes your build/test/deploy steps, and reports back. Historically that meant standing up a Jenkins server, paying for CircleCI, or wiring something custom. All of those still work; none of them are the lowest-friction option in 2026.
-
-GitHub Actions wins on three things:
-
-1. **It lives where the code lives.** No separate server, no separate auth, no separate UI. Your `.github/workflows/*.yml` files are part of the repo — they evolve with the code, get reviewed in the same PRs, and survive every clone.
-2. **It's free for public repos and generous for private ones.** A complete CI/CD pipeline costs zero rupees to start.
-3. **The Marketplace is enormous.** Need to SSH into a server? `appleboy/ssh-action`. Need to log in to Docker Hub? `docker/login-action`. You compose pre-built blocks instead of writing bash from scratch.
-
-The trade-off is GitHub lock-in. For most teams, that's a fair price for the integration.
-
----
-
-## What this project demonstrates
-
-A real pipeline, end to end, in roughly 50 lines of YAML.
-
-```
-┌─────────────┐     git push        ┌──────────────────┐
-│  Developer  ├────────────────────▶│  GitHub Repo     │
-└─────────────┘                     └────────┬─────────┘
-                                             │ on: push (main)
-                                             ▼
-                                    ┌──────────────────┐
-                                    │  CI Workflow     │
-                                    │  - build images  │
-                                    │  - tag :sha      │
-                                    │  - tag :latest   │
-                                    │  - push to Hub   │
-                                    └────────┬─────────┘
-                                             │ workflow_run: success
-                                             ▼
-                                    ┌──────────────────┐
-                                    │  CD Workflow     │
-                                    │  - SSH to EC2    │
-                                    │  - git pull      │
-                                    │  - compose pull  │
-                                    │  - compose up -d │
-                                    └────────┬─────────┘
-                                             │
-                                             ▼
-                                    ┌──────────────────┐
-                                    │  EC2: live app   │
-                                    │  http://<host>   │
-                                    └──────────────────┘
+```text
+CloudNative-CICD-Pipeline
 ```
 
-### CI — `.github/workflows/ci.yml`
+And the main README title:
 
-Triggered on every push to `main`. It does four things:
+# 🚀 CloudNative-CICD-Pipeline
 
-1. **Checks out the code.** A fresh clone in a clean Ubuntu runner — no laptop state to leak.
-2. **Builds two Docker images.** A Go backend and an Nginx-served frontend. Both are multi-stage so the final images are small.
-3. **Tags each image twice.** With the commit SHA (`:abc1234…`) and with `:latest`. The SHA tag is your rollback handle — you can always pin a deploy to an exact commit. The `:latest` tag is what production pulls.
-4. **Pushes both to Docker Hub.** Authenticated with secrets (`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`) — never plaintext credentials in the repo.
+## Automated CI/CD Pipeline with Docker & Kubernetes
 
-The non-obvious lesson: **CI doesn't just test your code. It produces an artifact.** That artifact — the image — is what production runs. If the artifact is built consistently in CI, it's the same in dev, staging, and prod. "Works on my machine" stops being a possibility.
+A production-style cloud-native application demonstrating **CI/CD automation, Docker containerization, Kubernetes orchestration, and MySQL database integration**.
 
-### CD — `.github/workflows/cd.yml`
+This project implements an end-to-end DevOps workflow using **GitHub Actions, Docker, Docker Hub, Kubernetes, Nginx, Go, and MySQL**. The goal is to automate application build, containerization, image publishing, and Kubernetes deployment.
 
-Triggered automatically when CI completes successfully (`workflow_run` + a `conclusion == 'success'` gate). Skipped if CI failed — you cannot deploy a broken build.
+---
 
-It SSHes into an EC2 instance and runs:
+## 📌 Project Overview
+
+**CloudNative-CICD-Pipeline** is a three-tier application designed to demonstrate a practical DevOps and cloud-native deployment workflow.
+
+The project covers the complete application delivery lifecycle:
+
+```text
+Developer
+    ↓
+GitHub
+    ↓
+GitHub Actions
+    ↓
+Build & Test
+    ↓
+Docker Images
+    ↓
+Docker Hub
+    ↓
+Kubernetes
+    ↓
+Application Deployment
+```
+
+### Key Objectives
+
+* Containerize frontend and backend applications
+* Run multiple services using Docker Compose
+* Automate CI/CD using GitHub Actions
+* Build and publish Docker images
+* Deploy applications to Kubernetes
+* Manage application configuration and secrets
+* Run MySQL as the persistent database layer
+* Implement health checks and rolling deployments
+* Practice real-world DevOps workflows
+
+---
+
+## 🏗️ Architecture
+
+```text
+                         Developer
+                             │
+                             │ git push
+                             ▼
+                    ┌─────────────────┐
+                    │     GitHub      │
+                    │   Repository    │
+                    └────────┬────────┘
+                             │
+                             ▼
+                  ┌─────────────────────┐
+                  │   GitHub Actions    │
+                  │       CI/CD         │
+                  └──────────┬──────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │     Docker      │
+                    │ Build & Test    │
+                    └────────┬────────┘
+                             │
+                             ▼
+                       Docker Hub
+                             │
+                             ▼
+                     ┌───────────────┐
+                     │  Kubernetes   │
+                     │    Cluster    │
+                     └───────┬───────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+              ▼              ▼              ▼
+         Frontend         Backend         MySQL
+          Nginx            Go API        Database
+```
+
+---
+
+## 🧰 Technology Stack
+
+| Category           | Technology                                  |
+| ------------------ | ------------------------------------------- |
+| Frontend           | HTML, CSS, JavaScript                       |
+| Web Server         | Nginx                                       |
+| Backend            | Go / Gin                                    |
+| Database           | MySQL 8.4                                   |
+| Containerization   | Docker                                      |
+| Orchestration      | Kubernetes                                  |
+| Local Kubernetes   | Kind                                        |
+| CI/CD              | GitHub Actions                              |
+| Container Registry | Docker Hub                                  |
+| Source Control     | Git & GitHub                                |
+| Configuration      | Environment Variables, ConfigMaps & Secrets |
+
+---
+
+## 📁 Project Structure
+
+```text
+CloudNative-CICD-Pipeline/
+│
+├── .github/
+│   └── workflows/
+│
+├── backend/
+│   ├── Dockerfile
+│   └── ...
+│
+├── frontend/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── ...
+│
+├── mysql/
+│   └── init.sql
+│
+├── k8s/
+│   ├── kind-config.yaml
+│   ├── namespace.yaml
+│   ├── mysql.yaml
+│   ├── backend.yaml
+│   └── frontend.yaml
+│
+├── docs/
+│
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+├── Makefile
+└── README.md
+```
+
+---
+
+## 🐳 Run Locally with Docker Compose
+
+### Prerequisites
+
+Install:
+
+* Git
+* Docker Desktop
+* Docker Compose
+
+Verify:
 
 ```bash
-if [ ! -d ~/skillpulse ]; then
-  git clone <this repo> ~/skillpulse
-fi
-cd ~/skillpulse
-git pull origin main
-[ -f .env ] || { echo "ERROR: .env missing"; exit 1; }
-docker compose pull
-docker compose up -d
-docker image prune -f
+docker --version
+docker compose version
 ```
 
-Every line earns its place:
-
-- The `if [ ! -d ... ]` makes the script **idempotent** — the same script runs whether it's the first deploy or the hundredth.
-- The `.env` check fails *loudly* with a useful message instead of letting `docker compose` produce a cryptic error about missing variables.
-- `docker compose pull` brings in the image you just built. `up -d` only recreates containers whose image actually changed — backend and DB don't get bounced if you only edited frontend HTML.
-- `docker image prune -f` keeps the EC2 disk from filling up with old image layers over weeks of deploys.
-
-### Secrets used
-
-| Secret | What it is |
-|---|---|
-| `DOCKERHUB_USERNAME` | Your Docker Hub account name |
-| `DOCKERHUB_TOKEN` | A Docker Hub Personal Access Token with read+write scope |
-| `EC2_HOST` | Public IP or DNS of the deploy target |
-| `EC2_USER` | Linux user on the EC2 (typically `ubuntu`) |
-| `EC2_SSH_KEY` | Private key contents — paste the entire `.pem` file as the secret value |
-
-Set them at `Settings → Secrets and variables → Actions` on your fork.
-
----
-
-## The application itself
-
-A three-tier app — kept tiny on purpose so the pipeline is the star.
-
-| Tier | Tech | What it does |
-|---|---|---|
-| Frontend | HTML + CSS + vanilla JS, served by Nginx | UI for adding skills and logging hours |
-| Backend | Go 1.26 + Gin | REST API at `/api/...` |
-| Database | MySQL 8.4 | Stores skills and learning logs |
-
-Nginx in the frontend image also reverse-proxies `/api/` and `/health` to the backend, so the public surface is a single port (`80`).
-
-API surface:
-
-```
-GET    /api/skills              list skills + total hours
-POST   /api/skills              create skill
-GET    /api/skills/:id          one skill + its logs
-DELETE /api/skills/:id          delete skill (cascades logs)
-POST   /api/skills/:id/log      log a study session
-GET    /api/dashboard           summary counters
-GET    /health                  DB ping for healthchecks
-```
-
----
-
-## Run it locally
+### 1. Clone the repository
 
 ```bash
-cp .env.example .env             # fill in DOCKERHUB_USERNAME (anything works for local)
+git clone https://github.com/omghule14/CloudNative-CICD-Pipeline.git
+cd CloudNative-CICD-Pipeline
+```
+
+### 2. Create environment configuration
+
+Linux/macOS:
+
+```bash
+cp .env.example .env
+```
+
+Windows CMD:
+
+```cmd
+copy .env.example .env
+```
+
+Update `.env` with the required configuration.
+
+### 3. Build and start
+
+```bash
 docker compose up -d --build
 ```
 
-Open http://localhost. Backend port 8080 is intentionally not exposed — all traffic goes through Nginx, exactly like production.
-
-To tear down:
+### 4. Check containers
 
 ```bash
-docker compose down -v           # -v also drops the MySQL volume
+docker compose ps
 ```
 
----
-
-## Run on Kubernetes (kind)
-
-Same app, same images, same external port — but now every primitive a student would see in production: namespace, deployment, service, statefulset, configmap, secret, pvc.
-
-**Prerequisites:** Docker Desktop running, plus `brew install kind kubectl`.
+or:
 
 ```bash
-make up                          # creates the kind cluster + applies manifests
-# visit http://localhost:8888
-make down                        # deletes the cluster (and the MySQL data with it)
+docker ps
 ```
 
-What `make up` actually runs, in order:
+### 5. Access the application
+
+```text
+http://localhost
+```
+
+---
+
+## 🔄 CI/CD Pipeline
+
+The GitHub Actions pipeline automates the software delivery process.
+
+```text
+Git Push
+   │
+   ▼
+GitHub Actions
+   │
+   ├── Checkout Code
+   │
+   ├── Build Backend
+   │
+   ├── Build Frontend
+   │
+   ├── Run Tests / Validation
+   │
+   ├── Build Docker Images
+   │
+   └── Push Images to Docker Hub
+                │
+                ▼
+          Docker Registry
+                │
+                ▼
+           Kubernetes
+                │
+                ▼
+          Application
+```
+
+### CI Responsibilities
+
+* Checkout source code
+* Validate application
+* Build Docker images
+* Tag images
+* Push images to Docker Hub
+
+### CD Responsibilities
+
+* Retrieve the latest container images
+* Update Kubernetes deployments
+* Perform rolling updates
+* Verify deployment status
+
+---
+
+## ☸️ Kubernetes Deployment
+
+The project supports deployment to a local Kubernetes cluster using **Kind**.
+
+### Prerequisites
 
 ```bash
-docker build -t trainwithshubham/skillpulse-backend:latest  ./backend
-docker build -t trainwithshubham/skillpulse-frontend:latest ./frontend
-kind create cluster --config k8s/kind-config.yaml --name skillpulse
-kind load docker-image trainwithshubham/skillpulse-backend:latest  --name skillpulse
-kind load docker-image trainwithshubham/skillpulse-frontend:latest --name skillpulse
-kubectl apply -f k8s/00-namespace.yaml \
-              -f k8s/10-mysql.yaml \
-              -f k8s/20-backend.yaml \
-              -f k8s/30-frontend.yaml
-kubectl rollout status statefulset/mysql   -n skillpulse --timeout=180s
-kubectl rollout status deployment/backend  -n skillpulse --timeout=120s
-kubectl rollout status deployment/frontend -n skillpulse --timeout=60s
+docker --version
+kubectl version --client
+kind version
 ```
 
-Notes on this flow:
-
-- **`docker build` runs on your laptop**, producing images for your host's architecture (Apple Silicon → arm64; Intel/Linux → amd64). The cluster never has to deal with multi-arch.
-- **`kind load docker-image`** copies each image into the kind node's containerd. `imagePullPolicy: IfNotPresent` on the Deployments means k8s reuses the loaded image and never tries to pull from Docker Hub.
-- **`kind-config.yaml`** lives alongside the manifests for proximity, but it's a `kind` config — not a Kubernetes resource — so it's fed to `kind create cluster`, not `kubectl apply`.
-
-Inner-loop after editing code: `make restart` rebuilds the images, reloads them into the cluster, and rolls the Deployments.
-
-### How traffic flows
-
-The cluster has **three nodes**: one control-plane and two workers (`skillpulse-worker`, `skillpulse-worker2`). Workloads schedule onto the workers — the control-plane is tainted `NoSchedule` by default, so it stays focused on the API server, scheduler, and controller-manager.
-
-```
-host browser            kind cluster (1 control-plane + 2 workers)
-http://localhost:8888
-        │
-        ▼ (kind extraPortMappings on control-plane: hostPort 8888 → nodePort 30080)
-   Service frontend (NodePort 30080)  — reachable on every node, kube-proxy routes
-        │
-        ▼
-   Deployment frontend (nginx + static)  — runs on whichever worker the scheduler picks
-        │ proxy_pass http://backend:8080  (same hostname as docker-compose)
-        ▼
-   Service backend (ClusterIP 8080)
-        │
-        ▼
-   Deployment backend (Go + Gin)
-        │ DB_HOST=mysql
-        ▼
-   Service mysql (Headless 3306)
-        │
-        ▼
-   StatefulSet mysql + 1Gi PVC + ConfigMap-mounted init.sql
-```
-
-### Manifest layout
-
-```
-k8s/
-  kind-config.yaml      cluster shape: 1 control-plane + 2 workers, host 8888 → node 30080
-  00-namespace.yaml     namespace: skillpulse
-  10-mysql.yaml         Secret + ConfigMap (init.sql) + headless Service + StatefulSet + 1Gi PVC
-  20-backend.yaml       Deployment + ClusterIP Service, env from Secret, /health probes
-  30-frontend.yaml      Deployment + NodePort Service (30080), / probes
-```
-
-### Useful commands
-
-| Command | What it does |
-|---|---|
-| `make status` | One-screen view of pods, services, endpoints |
-| `make logs` | Tail all three workloads at once |
-| `make mysql` | Open a `mysql` shell in the StatefulSet pod |
-| `make restart` | Roll backend + frontend (e.g. after pushing a new image) |
-
-### Smoke test
+### Create the cluster
 
 ```bash
-curl http://localhost:8888/health                 # → {"status":"healthy"}
-curl http://localhost:8888/api/dashboard          # → seed-data counters
-curl -s http://localhost:8888/ | grep '<title>'   # → HTML title containing "SkillPulse"
+make up
 ```
 
-### Gotchas worth knowing
+### Check cluster
 
-- **Docker Desktop must be running.** `docker build`, `kind`, and `kubectl` all talk to the Docker daemon on your machine.
-- **First boot is slow.** The local-path provisioner has to materialise the PVC before MySQL starts. Expect 10–30s of `Pending` on `make up`'s first run.
-- **Host port collision.** If something else owns 8888 on the host, the cluster comes up but `curl localhost:8888` fails. Free the port — or change `hostPort` in `k8s/kind-config.yaml` and re-run `make down && make up`.
-- **No Docker Hub round-trip in this chapter.** Images are built locally and pushed into the kind node via `kind load`. Useful when you're iterating on code: `make restart` rebuilds + reloads + rolls without ever touching Docker Hub. (Production EKS/GKE clusters do pull from a registry — that's the next chapter.)
-
-### What's next
-
-This is the **kind chapter** — same app, real Kubernetes primitives, but limited to one local node and `NodePort` access. The next chapter graduates the same workload to:
-
-- An **Ingress** controller (nginx-ingress) so traffic enters via `Ingress` rules instead of NodePort.
-- **Helm or Kustomize** so the manifests stop being copy-pasted between environments.
-- A real **cloud cluster** (EKS / GKE / AKS) and CD that runs `kubectl apply` from the pipeline instead of `appleboy/ssh-action`.
-
----
-
-## Continuous deployment to the kind cluster
-
-The new CD path doesn't `kubectl apply` from GitHub Actions — your kind cluster lives on your laptop, GitHub can't reach it. Instead, the pipeline takes the GitOps shape: **the repo is the source of truth, your cluster is one `git pull && make apply` away**.
-
-```
-git push to main
-    ↓
-CI: build images, push trainwithshubham/skillpulse-{backend,frontend}:{latest,<sha>}
-    ↓
-cd-k8s.yml: sed image: lines in k8s/20-backend.yaml + k8s/30-frontend.yaml
-            commit "deploy: pin backend+frontend to <short-sha>" to main as github-actions[bot]
-    ↓
-(you, locally):
-    git pull && make apply
-    ↓
-kind nodes pull the new :<sha> from Docker Hub → rolling update
+```bash
+kubectl get nodes
 ```
 
-### How to wire it up on your fork
+### Check pods
 
-1. **Fork this repo + clone locally.** `make up` should work after that (see the [Run on Kubernetes (kind)](#run-on-kubernetes-kind) section).
-2. **Add two secrets** to your fork (`Settings → Secrets and variables → Actions`):
-
-   | Secret | Value |
-   |---|---|
-   | `DOCKERHUB_USERNAME` | your Docker Hub account name |
-   | `DOCKERHUB_TOKEN` | a Docker Hub Personal Access Token with Read & Write scope |
-
-3. **Set the repo variable** `DEPLOY_ENABLED = "true"` (`Settings → Variables → Actions`). Until this is `true`, CI builds without pushing and both CD workflows skip cleanly — the "dry run" state.
-4. **Push any code change** (not a `.md`, not under `k8s/` or `docs/` — those are deliberately ignored by CI). Watch the Actions tab:
-   - **CI** builds + pushes both images to Docker Hub.
-   - **CD (kind cluster — manifest bump)** commits a `deploy: pin backend+frontend to <sha>` change to main.
-5. **Pull and deploy**, on the laptop with the kind cluster:
-   ```bash
-   git pull
-   make apply
-   kubectl get pods -n skillpulse -o wide
-   ```
-   You'll see new pods with the bumped image rolling out. mysql untouched.
-
-### What about the EC2 path?
-
-The previous chapter's `cd.yml` is still in the repo — it SSHes into an EC2 and runs `docker compose up`. It's gated on the same `DEPLOY_ENABLED` variable plus three EC2 secrets (`EC2_HOST`, `EC2_USER`, `EC2_SSH_KEY`). Skip those secrets and `cd.yml` will fail loudly when `DEPLOY_ENABLED=true`; that's expected — it's the previous chapter's deploy target, kept around as the masterclass artifact.
-
-### Break it on purpose to learn
-
-- **Push a commit that fails to build** → both CD workflows are *skipped*, not failed (the `if: success()` gate).
-- **Rotate the Docker Hub token** → next CI fails at the login step. You'll learn what an expired credential looks like in logs.
-- **Edit `k8s/20-backend.yaml`'s image tag by hand and push** → CI is *skipped* (paths-ignore), `cd-k8s.yml` does fire but the manifest is already pinned, so it no-ops and exits 0. That's the loop-protection working.
-
----
-
-## Project layout
-
+```bash
+kubectl get pods -A
 ```
-backend/                Go service
-  Dockerfile            multi-stage: golang:1.26-alpine → alpine:3.23
-  main.go               wires routes, reads PORT env
-  database/db.go        connects to MySQL with retry-loop
-  handlers/             skills, logs, dashboard endpoints
-  models/               request/response structs
 
-frontend/               static UI + Nginx config
-  Dockerfile            FROM nginx:alpine, copies html/css/js + nginx.conf
-  index.html, css/, js/ vanilla — no build step
-  nginx.conf            serves the site, proxies /api/ to backend:8080
+### Check services
 
-mysql/init.sql          schema + seed data, mounted into the MySQL container
+```bash
+kubectl get services -A
+```
 
-docker-compose.yml      three services: db, backend, frontend
-.env.example            copy to .env
+### Check deployments
 
-.github/workflows/
-  ci.yml                build + push images on every main push
-  cd.yml                SSH + redeploy on CI success
+```bash
+kubectl get deployments -A
 ```
 
 ---
 
-## Where this goes next
+## 🔐 Security & Configuration
 
-This is the **GitHub Actions** half of the masterclass. The pipeline currently deploys to a single EC2 via SSH + docker compose — a fine starting point, and the most common "first real pipeline" in the industry.
+Sensitive information should never be committed to GitHub.
 
-The Kubernetes half of the course evolves this same app onto a cluster:
+The project uses:
 
-- Replace `docker compose` with manifests (Deployment, Service, Ingress).
-- Replace SSH-driven deploys with `kubectl apply` from CI, then with GitOps (Argo CD / Flux).
-- Add health checks, autoscaling, rolling updates with no downtime, secrets via Kubernetes Secrets or external managers.
-- Run the cluster on EKS / GKE / AKS or local (kind / minikube).
+* `.env` for local configuration
+* Kubernetes Secrets for sensitive Kubernetes configuration
+* GitHub Actions Secrets for CI/CD credentials
 
-Same app. Same pipeline shape. Different runtime — and a lot more power.
+Sensitive files should remain excluded from Git:
+
+```text
+.env
+*.pem
+private keys
+passwords
+API tokens
+Docker Hub credentials
+```
 
 ---
 
-## Credits
+## 🗄️ Database
 
-Built for the [TrainWithShubham](https://www.youtube.com/@TrainWithShubham) community. If this repo helped you understand a real CI/CD pipeline end to end, share it forward — that's how the community grows.
+The application uses **MySQL 8.4** as its database layer.
+
+The database is initialized using:
+
+```text
+mysql/init.sql
+```
+
+With Docker Compose, the database runs as a separate container.
+
+With Kubernetes, MySQL is deployed separately and accessed by the backend through Kubernetes service discovery.
+
+```text
+Backend
+   │
+   │ mysql-service:3306
+   ▼
+MySQL
+```
+
+---
+
+## 🌐 Nginx Reverse Proxy
+
+Nginx acts as the frontend web server and reverse proxy.
+
+```text
+Client
+  │
+  ▼
+Nginx :80
+  │
+  ├── Static Frontend
+  │
+  └── /api/
+        │
+        ▼
+      Backend :8080
+```
+
+This provides a single entry point for users while keeping the backend service isolated from direct external access.
+
+---
+
+## 🩺 Health Checks
+
+Health checks are used to verify application availability.
+
+Example:
+
+```text
+GET /health
+```
+
+Health checks help Docker and Kubernetes determine whether the application is ready to receive traffic.
+
+---
+
+## 🛠️ Useful Docker Commands
+
+### Start
+
+```bash
+docker compose up -d
+```
+
+### Rebuild
+
+```bash
+docker compose up -d --build
+```
+
+### Stop
+
+```bash
+docker compose down
+```
+
+### View containers
+
+```bash
+docker compose ps
+```
+
+### View logs
+
+```bash
+docker compose logs
+```
+
+### View backend logs
+
+```bash
+docker compose logs backend
+```
+
+### View frontend logs
+
+```bash
+docker compose logs frontend
+```
+
+### View database logs
+
+```bash
+docker compose logs db
+```
+
+---
+
+## 🛠️ Useful Kubernetes Commands
+
+### Pods
+
+```bash
+kubectl get pods
+```
+
+### Services
+
+```bash
+kubectl get svc
+```
+
+### Deployments
+
+```bash
+kubectl get deployments
+```
+
+### Pod logs
+
+```bash
+kubectl logs <pod-name>
+```
+
+### Describe resource
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Deployment status
+
+```bash
+kubectl rollout status deployment/<deployment-name>
+```
+
+### Restart deployment
+
+```bash
+kubectl rollout restart deployment/<deployment-name>
+```
+
+---
+
+## 🎯 DevOps Skills Demonstrated
+
+This project demonstrates practical experience with:
+
+### Git & GitHub
+
+* Git repositories
+* Branch management
+* Commits
+* Remote repositories
+* GitHub workflows
+
+### Docker
+
+* Dockerfiles
+* Docker images
+* Container networking
+* Docker Compose
+* Environment variables
+
+### GitHub Actions
+
+* CI/CD workflows
+* Automated builds
+* Docker image publishing
+* Deployment automation
+* Secrets management
+
+### Kubernetes
+
+* Pods
+* Deployments
+* Services
+* StatefulSets
+* ConfigMaps
+* Secrets
+* Persistent storage
+* Health probes
+* Rolling updates
+
+### DevOps Practices
+
+* Infrastructure automation
+* Continuous integration
+* Continuous deployment
+* Containerization
+* Service discovery
+* Application monitoring
+* Troubleshooting
+
+---
+
+## 🔮 Future Improvements
+
+Planned improvements include:
+
+* Deploy to AWS EKS
+* Add AWS Application Load Balancer
+* Implement Kubernetes Ingress
+* Add Horizontal Pod Autoscaling
+* Introduce Helm charts
+* Implement GitOps using Argo CD
+* Add Prometheus and Grafana
+* Add centralized logging
+* Integrate AWS Secrets Manager
+* Add container vulnerability scanning
+* Implement blue-green/canary deployments
+
+---
+
+## 👨‍💻 Author
+
+### Om Ghule
+
+**GitHub:**
+[https://github.com/omghule14](https://github.com/omghule14)
+
+---
+
+## ⭐ Project
+
+**CloudNative-CICD-Pipeline**
+
+A hands-on DevOps project demonstrating how a containerized application can be built, tested, packaged, and deployed using modern CI/CD and Kubernetes practices.
